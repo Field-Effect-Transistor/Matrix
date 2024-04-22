@@ -16,16 +16,17 @@ public:
     int getRows(){return rows;}
     int getCols(){return cols;}
 
-    T getDeterminant();
-    Matrix getTranspose();
-    Matrix getInverse();
+    T getDeterminant() const;
+    Matrix getTranspose() const;
+    Matrix getInverse() const;
+    Matrix getSubMatrix(int upperRow, int lowerRow, int leftCol, int rightCol) const;
 
     T* operator[](int row){return data[row];}
     Matrix<T> operator+(const Matrix<T>& other)const;
     Matrix operator-(const Matrix& other)const;
     Matrix operator*(const Matrix& other)const;
     Matrix operator/(const Matrix& other)const;
-    Matrix operator/(const T& number)const;
+    Matrix operator/(const T& number)const {return (1 / number) * number;};
     Matrix operator=(const Matrix& other);
     /** @brief Matrix power */
     Matrix operator^(const int number)const;

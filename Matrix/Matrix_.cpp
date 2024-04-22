@@ -105,3 +105,64 @@ Matrix<T> Matrix<T>::operator=(const Matrix<T>& other) {
             this->data[i][j] = other.data[i][j];
     return *this;
 }
+
+template<typename T>
+Matrix<T> Matrix<T>::getTranspose() const {
+    Matrix<T> result(this->cols, this->rows);
+    for(int i = 0; i < rows; ++i)
+        for(int j = 0; j < cols; ++j)
+            result[j][i] = (*this)[i][j];
+    return result;
+}
+
+template<typename T>
+T Matrix<T>::getDeterminant() const {
+    if(this->rows != this->cols) {
+        std::cout << "Matrixe have different sizes" << std::endl;
+        return 0;
+    }
+
+    if(this->rows == 1)
+        return **(this->data);
+
+    if(this->rows == 2)
+        return (this->data[0][0] * this->data[1][1] - this->data[0][1] * this->data[1][0]);
+
+    return (T)0;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::getSubMatrix(int upperRow, int lowerRow, int leftCol, int rightCol) const {
+    if(upperRow < 0 || upperRow > this->rows){
+        std::cout << "Upper row index is out of bounds" << std::endl;
+        return Matrix<T>();
+    }
+
+    if(lowerRow < 0 || lowerRow > this->rows){
+        std::cout << "Lower row index is out of bounds" << std::endl;
+        return Matrix<T>();
+    }
+
+    if(leftCol < 0 || leftCol > this->cols){
+        std::cout << "Left column index is out of bounds" << std::endl;
+        return Matrix<T>();
+    }
+
+    if(rightCol < 0 || rightCol > this->cols){
+        std::cout << "Right column index is out of bounds" << std::endl;
+        return Matrix<T>();
+    }
+
+    if(rightCol < leftCol || lowerRow < upperRow){
+        std::cout << "Wrong indexes" << std::endl;
+        return Matrix<T>();
+    }
+
+    Matrix<T> result(lowerRow - upperRow + 1, rightCol - leftCol + 1);
+    for(int i = 0; i < result.rows; ++i)
+        for(int j = 0; j < result.cols; ++j)
+            result.data[i][j] = this->data[upperRow + i][leftCol + j];
+
+    return result;
+};
+
