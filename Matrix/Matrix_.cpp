@@ -114,7 +114,7 @@ Matrix<T> Matrix<T>::getTranspose() const {
     Matrix<T> result(this->cols, this->rows);
     for(int i = 0; i < rows; ++i)
         for(int j = 0; j < cols; ++j)
-            result[j][i] = (*this)[i][j];
+            result[j][i] = this->data[i][j];
     return result;
 }
 
@@ -205,4 +205,22 @@ T Matrix<T>::getAlgebraicComplement(int row, int col) const {
         return -(this->removeRowCol(row, col)).getDeterminant();
 
     return (this->removeRowCol(row, col)).getDeterminant();
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::getInverse() const {
+    if(this->getDeterminant() == 0){
+        std::cout << "Matrix have no inverse" << std::endl;
+        return Matrix<T>();
+    }
+    return this->getAdjoint() / this->getDeterminant();
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::getAdjoint() const {
+    Matrix<T> result(this->rows, this->cols);
+    for(int i = 0; i < this->rows; ++i)
+        for(int j = 0; j < this->cols; ++j)
+            result.data[i][j] = this->getAlgebraicComplement(j, i);
+    return result;
 }
