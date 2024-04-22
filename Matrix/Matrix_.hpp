@@ -16,10 +16,13 @@ public:
     int getRows(){return rows;}
     int getCols(){return cols;}
 
+
+    T getAlgebraicComplement(int row, int col) const;
     T getDeterminant() const;
     Matrix getTranspose() const;
     Matrix getInverse() const;
     Matrix getSubMatrix(int upperRow, int lowerRow, int leftCol, int rightCol) const;
+    Matrix removeRowCol(int row, int col) const;
 
     T* operator[](int row){return data[row];}
     Matrix<T> operator+(const Matrix<T>& other)const;

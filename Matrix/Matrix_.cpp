@@ -76,6 +76,9 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& other)const {
 
 template<typename U>
 Matrix<U> operator*(const U& number, const Matrix<U>& matrix) {
+    if(!number)
+        return Matrix<U>(matrix.rows, matrix.cols); 
+
     Matrix<U> result = matrix;
     for(int i = 0; i < matrix.rows; ++i)
         for(int j = 0; j < matrix.cols; ++j)
@@ -128,7 +131,11 @@ T Matrix<T>::getDeterminant() const {
     if(this->rows == 2)
         return (this->data[0][0] * this->data[1][1] - this->data[0][1] * this->data[1][0]);
 
-    return (T)0;
+    T result = 0;
+    for(int i = 0; i < this->cols; ++i)
+        result += this->data[0][i] * this->getAlgebraicComplement(0, i);
+
+    return result;
 }
 
 template<typename T>
@@ -166,3 +173,36 @@ Matrix<T> Matrix<T>::getSubMatrix(int upperRow, int lowerRow, int leftCol, int r
     return result;
 };
 
+template<typename T>
+Matrix<T> Matrix<T>::removeRowCol(int row, int col) const {
+    if(row < 0 || row >= this->rows){
+        std::cout << "Row index is out of bounds" << std::endl;
+        return Matrix<T>(*this);
+    }
+    if(col < 0 || col >= this->cols){
+        std::cout << "Col index is out of bounds" << std::endl;
+        return Matrix<T>(*this);
+    }
+    Matrix<T> result(this->rows - 1, this->cols - 1);
+    for(int resRow = 0, i = 0; i < this->rows; ++i)
+    if(i != row){
+        for(int resCol = 0, j = 0; j < this->cols; ++j)
+            if(j != col)
+                result.data[resRow][resCol++] = this->data[i][j];
+        ++resRow;
+    }
+
+    return result;
+}
+
+template<typename T>
+T Matrix<T>::getAlgebraicComplement(int row, int col) const {
+    if((row < 0 || row >= this->rows) || (col < 0 || col >= this->cols)){
+        std::cout << "Wrong indexes" << std::endl;
+        return 0;
+    }
+    if((col + row) % 2)
+        return -(this->removeRowCol(row, col)).getDeterminant();
+
+    return (this->removeRowCol(row, col)).getDeterminant();
+}
