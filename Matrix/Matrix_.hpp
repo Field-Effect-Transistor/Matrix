@@ -7,7 +7,7 @@ private:
     int rows, cols;
 public:
     Matrix(int rows, int cols, T** data = nullptr);
-    Matrix():Matrix(0, 0){};
+    Matrix():Matrix(1, 1){};
     Matrix(const Matrix& parent):Matrix(parent.rows, parent.cols, parent.data){};
     ~Matrix();
 
@@ -32,7 +32,7 @@ public:
     Matrix operator-=(const Matrix& other){ return *this = *this - other; }
     Matrix operator*(const Matrix& other)const;
     Matrix operator*=(const Matrix& other){ return *this = *this * other; }
-    Matrix operator/(const T& number)const {return (1 / number) * *this;};
+    Matrix operator/(const T& number)const {return (1 / number) * (*this);};
     Matrix operator/=(const T& number){ return *this = *this / number; }
     Matrix operator=(const Matrix& other);
     /** @brief Matrix power */

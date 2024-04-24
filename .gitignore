@@ -34,3 +34,5 @@
 /.vscode
 /build
 index.cpp
+/Fraction
+Fraction.hpp

@@ -6,12 +6,17 @@ Matrix<T>::Matrix(int rows, int cols, T**data) {
     this->cols = cols;
     this->data = new T*[rows];
     for(int i = 0; i < rows; ++i)
-        this->data[i] = new T[cols]{0};
+        this->data[i] = new T[cols];
     
     if(data)
         for(int i = 0; i < rows; ++i)
             for(int j = 0; j < cols; ++j)
                 this->data[i][j] = data[i][j];
+    else 
+        for(int i = 0; i < rows; ++i)
+            for(int j = 0; j < cols; ++j)
+                this->data[i][j] = 0;
+
 }
 
 template<typename T>
@@ -76,7 +81,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& other)const {
 
 template<typename U>
 Matrix<U> operator*(const U& number, const Matrix<U>& matrix) {
-    if(!number)
+    if(number != 0)
         return Matrix<U>(matrix.rows, matrix.cols); 
 
     Matrix<U> result = matrix;
@@ -183,14 +188,14 @@ Matrix<T> Matrix<T>::removeRowCol(int row, int col) const {
         std::cout << "Col index is out of bounds" << std::endl;
         return Matrix<T>(*this);
     }
-    Matrix<T> result(this->rows - 1, this->cols - 1);
+    Matrix<T> result = Matrix<T>(this->rows - 1, this->cols - 1);
     for(int resRow = 0, i = 0; i < this->rows; ++i)
-    if(i != row){
-        for(int resCol = 0, j = 0; j < this->cols; ++j)
-            if(j != col)
-                result.data[resRow][resCol++] = this->data[i][j];
-        ++resRow;
-    }
+        if(i != row){
+            for(int resCol = 0, j = 0; j < this->cols; ++j)
+                if(j != col)
+                    result[resRow][resCol++] = this->data[i][j];
+            ++resRow;
+        }
 
     return result;
 }
@@ -202,7 +207,7 @@ T Matrix<T>::getAlgebraicComplement(int row, int col) const {
         return 0;
     }
     if((col + row) % 2)
-        return -(this->removeRowCol(row, col)).getDeterminant();
+        return -1 * (this->removeRowCol(row, col)).getDeterminant();
 
     return (this->removeRowCol(row, col)).getDeterminant();
 }
