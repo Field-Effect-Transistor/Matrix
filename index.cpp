@@ -1,5 +1,8 @@
 #include "Matrix.hpp"
 
+//TODO: operator>>
+//rang
+
 int main(void) {
     Matrix<double> a = Matrix<double>(5, 5, new double*[5]{
         new double[5]{1, 0, 3, 4, 5},
