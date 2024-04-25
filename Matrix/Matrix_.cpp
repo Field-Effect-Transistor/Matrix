@@ -229,3 +229,78 @@ Matrix<T> Matrix<T>::getAdjoint() const {
             result.data[i][j] = this->getAlgebraicComplement(j, i);
     return result;
 }
+
+template<typename U>
+Matrix<U> operator*=(const Matrix<U>& matrix, const U& number) {
+    return number = number * matrix;
+}
+
+template<typename U>
+Matrix<U> operator*=(const U& number, const Matrix<U>& matrix) {
+    return number = number * matrix;
+}
+
+template<typename U>
+Matrix<U> operator*(const Matrix<U>& matrix, const U& number) {
+    return number * matrix;
+};
+
+template<typename T>
+Matrix<T>  Matrix<T>::operator^=(const int number){
+    return *this = *this ^ number;
+};
+
+template<typename T>
+Matrix<T> Matrix<T>::operator/=(const T& number){
+    return *this = *this / number;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::operator/(const T& number)const {
+    Matrix<T> result(*this);
+    if(number == 0){
+        std::cout << "Division by zero" << std::endl;
+    } else {
+        for(int i = 0; i < this->rows; ++i)
+            for(int j = 0; j < this->cols; ++j)
+                result.data[i][j] /= number;
+    }
+    return result;
+};
+
+template<typename T>
+Matrix<T> Matrix<T>::operator*=(const Matrix<T>& other){
+    return *this = *this * other;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::operator-=(const Matrix<T>& other) {
+    return *this = *this - other;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::operator+=(const Matrix<T>& other) {
+    return *this = *this + other;
+}
+
+template<typename T>
+T* Matrix<T>::operator[](int row){
+    return data[row];
+}
+
+template<typename T>
+T* Matrix<T>::get(int row, int col) {
+    return *data[row][col];
+}
+template<typename T>
+T** Matrix<T>::getData() {
+    return data;
+}
+template<typename T>
+int Matrix<T>::getRows() {
+    return rows;
+}
+template<typename T>
+int Matrix<T>::getCols() {
+    return cols;
+}
