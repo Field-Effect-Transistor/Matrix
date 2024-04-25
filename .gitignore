@@ -33,6 +33,6 @@
 
 /.vscode
 /build
-#index.cpp
-#/Fraction
-#Fraction.hpp
+index.cpp
+/Fraction
+Fraction.hpp
