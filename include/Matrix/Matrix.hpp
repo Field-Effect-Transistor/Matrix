@@ -1,3 +1,4 @@
+#include <iostream>
 #pragma once
 
 namespace Matrix {
@@ -66,9 +67,32 @@ namespace Matrix {
 
     // Operators
         inline T* operator[](size_t row) {return data_[row];}
-    
-    // Matrix x Matrix
+        std::istream friend operator>>(std::istream in, Matrix<T>& matrix){
+            return in;
+        }
+        std::ostream& friend operator<<(std::ostream& out, Matrix<T>& matrix) {
+            for(size_t i = 0; i < matrix.getRows(); ++i) {
+                for(size_t j = 0; j < matrix.getColumns(); ++j)
+                    out << matrix[i][j] << "\t";
+                out << std::endl;
+            }
+            return out;
+        }
 
+    // Matrix x Matrix
+        Matrix<T> friend operator+(const Matrix<T>& left, const Matrix<T>& right) {
+            if(left.getRows() == right.getRows() && left.getColumns() == right.getColumns()) {
+                std::cerr << "Uncompletible matrixes\n";
+                return Matrix<T>();
+            }
+
+            Matrix<T> result(left);
+            for(size_t i = 0; i < result.getRows(); ++i)
+                for(size_t j = 0; j < result.getColumns(); ++j)
+                    result[i][j] += left[i][j];
+                
+            return result;
+        }
 
     // Matrix x number
         Matrix<T> friend operator*(const T& number, const Matrix<T>& matrix) {
@@ -80,6 +104,19 @@ namespace Matrix {
         }
         Matrix<T> operator*(const T& number) {
             return number * *this;
+        }
+
+        Matrix<T> operator/(const T& number) {
+            if(number == 0) {
+                std::cerr << "Divide by zero";
+                return *this;
+            }
+
+            Matrix<T> result(*this);
+            for(size_t i = 0; i < result.rows_; ++i)
+                for(size_t j = 0; j < result.columns_; ++j)
+                    result[i][j] /= number;
+            return result;
         }
     };
 }
