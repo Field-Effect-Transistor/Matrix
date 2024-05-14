@@ -77,7 +77,13 @@ namespace Matrix {
         inline size_t getColumns(void) const {return columns_;}
 
     // Methods
-        Matrix<T> Transpose(void) const;
+        Matrix<T> Transpose(void) const {
+            Matrix<T> result(columns_, rows_);
+            for(size_t i = 0; i < columns_; ++i)
+                for(size_t j = 0; j < rows_; ++j)
+                    result[i][j] = data_[j][i];
+            return result;
+        }
         T Determinant(void) const;
         size_t Rank(void) const;
         Matrix<T> RowEchelonForm(void) const;
@@ -116,6 +122,8 @@ namespace Matrix {
                     data_[i][j] = parent.data_[i][j];
             return *this;
         }
+    // Matrix x Vector
+        
 
     // Matrix x Matrix
         friend Matrix<T> operator+(const Matrix<T>& left, const Matrix<T>& right) {
