@@ -98,6 +98,25 @@ namespace Matrix {
             return out;
         }
 
+    // = operators
+        const Matrix<T>& operator=(const Matrix<T>& parent) {
+            for(size_t i = 0; i < rows_; ++i)
+                delete[] data_[i];
+            delete[] data_;
+
+            rows_ = parent.rows_;
+            columns_ = parent.columns_;
+
+            data_ = new T*[rows_];
+            for(size_t i = 0; i < rows_; ++i)
+                data_[i] = new T[columns_];
+
+            for(size_t i = 0; i < rows_; ++i)
+                for(size_t j = 0; j < columns_; ++j)
+                    data_[i][j] = parent.data_[i][j];
+            return *this;
+        }
+
     // Matrix x Matrix
         friend Matrix<T> operator+(const Matrix<T>& left, const Matrix<T>& right) {
             if(left.getRows() != right.getRows() || left.getColumns() != right.getColumns()) {
@@ -149,9 +168,10 @@ namespace Matrix {
         Matrix<T> operator*(const T& number) {
             return number * *this;
         }
-        friend Matrix<T> operator^(const Matrix<T>& matrix, const T& number) {
+        //refactor to remove operator* 
+        friend Matrix<T> operator^(const Matrix<T>& matrix, int power) {
             Matrix<T> result(matrix);
-            for(T i = 1; i < number; i++)
+            for(;power > 1; --power)
                 result = result * matrix;
             return result;
         }
