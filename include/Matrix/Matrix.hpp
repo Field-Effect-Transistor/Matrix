@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #pragma once
 
 namespace Matrix {
@@ -38,9 +39,9 @@ namespace Matrix {
                     for(size_t j = 0; j < columns_; j++)
                         data_[i][j] = 0;
             }
-
+            std::cout << "Matrix(size_t rows, size_t columns, T** data = nullptr) WORKS" << std::endl;
         }
-        Matrix(): Matrix(1, 1) {}
+        Matrix(): Matrix(1, 1) { std::cout << "WITH Matrix(): Matrix(1, 1)" << std::endl;}
         Matrix(const Matrix<T>& parent) {
             rows_ = parent.rows_;
             columns_ = parent.columns_;
@@ -50,14 +51,24 @@ namespace Matrix {
             for(size_t i = 0; i < rows_; i++)
                 for(size_t j = 0; j < columns_; j++)
                     data_[i][j] = parent.data_[i][j];
+            std::cout << "Matrix(const Matrix<T>& parent) WORKS" << std::endl;
         }
-
+        explicit Matrix(const std::vector<T>& parent) {
+            rows_ = parent.size();
+            columns_ = 1;
+            data_ = new T*[rows_];
+            for(size_t i = 0; i < rows_; i++)
+                data_[i] = new T[columns_];
+            for(size_t i = 0; i < rows_; i++)
+                data_[i][0] = parent[i];
+            std::cout << "explicit Matrix(const std::vector<T>& parent) WORKS" << std::endl;
+        }
     // Destructor
         ~Matrix() {
             for(size_t i = 0; i < rows_; i++)
                 delete[] data_[i];
             delete[] data_;
-            std::cout << "Imma work!" << std::endl;
+            std::cout << "~Matrix() WORKS" << std::endl;
         }
     
     // Getters
@@ -65,12 +76,20 @@ namespace Matrix {
         inline size_t getRows(void) const {return rows_;}
         inline size_t getColumns(void) const {return columns_;}
 
+    // Methods
+        Matrix<T> Transpose(void) const;
+        T Determinant(void) const;
+        size_t Rank(void) const;
+        Matrix<T> RowEchelonForm(void) const;
+        Matrix<T> Diagonal(void) const;
+        Matrix<T> Inverse(void) const;
+
     // Operators
-        inline T* operator[](size_t row) {return data_[row];}
-        std::istream friend operator>>(std::istream in, Matrix<T>& matrix){
+        inline T* operator[](size_t row) const {return data_[row];}
+        friend std::istream operator>>(std::istream in, Matrix<T>& matrix){
             return in;
         }
-        std::ostream& friend operator<<(std::ostream& out, Matrix<T>& matrix) {
+        friend std::ostream& operator<<(std::ostream& out, const Matrix<T>& matrix) {
             for(size_t i = 0; i < matrix.getRows(); ++i) {
                 for(size_t j = 0; j < matrix.getColumns(); ++j)
                     out << matrix[i][j] << "\t";
@@ -80,9 +99,9 @@ namespace Matrix {
         }
 
     // Matrix x Matrix
-        Matrix<T> friend operator+(const Matrix<T>& left, const Matrix<T>& right) {
-            if(left.getRows() == right.getRows() && left.getColumns() == right.getColumns()) {
-                std::cerr << "Uncompletible matrixes\n";
+        friend Matrix<T> operator+(const Matrix<T>& left, const Matrix<T>& right) {
+            if(left.getRows() != right.getRows() || left.getColumns() != right.getColumns()) {
+                std::cerr << "Incompatible matrixes\n";
                 return Matrix<T>();
             }
 
@@ -93,9 +112,34 @@ namespace Matrix {
                 
             return result;
         }
+        friend Matrix<T> operator-(const Matrix<T>& left, const Matrix<T>& right) {
+            if(left.getRows() == right.getRows() && left.getColumns() == right.getColumns()) {
+                std::cerr << "Incompatible matrixes\n";
+                return Matrix<T>();
+            }
 
+            Matrix<T> result(left);
+            for(size_t i = 0; i < result.getRows(); ++i)
+                for(size_t j = 0; j < result.getColumns(); ++j)
+                    result[i][j] -= left[i][j];
+                
+            return result;
+        }
+        friend Matrix<T> operator*(const Matrix<T>& left, const Matrix<T>& right) {
+            if(left.getColumns() != right.getRows()) {
+                std::cerr << "Incompatible matrixes\n";
+                return Matrix<T>();
+            }
+
+            Matrix<T> result(left.getRows(), right.getColumns());
+            for(size_t i = 0; i < result.getRows(); ++i)
+                for(size_t j = 0; j < result.getColumns(); ++j)
+                    for(size_t k = 0; k < left.getColumns(); ++k)
+                        result[i][j] += left[i][k] * right[k][j];
+            return result;
+        }
     // Matrix x number
-        Matrix<T> friend operator*(const T& number, const Matrix<T>& matrix) {
+        friend Matrix<T> operator*(const T& number, const Matrix<T>& matrix) {
             Matrix<T> result(matrix);
             for(size_t i = 0; i < result.rows_; i++)
                 for(size_t j = 0; j < result.columns_; j++)
@@ -105,7 +149,12 @@ namespace Matrix {
         Matrix<T> operator*(const T& number) {
             return number * *this;
         }
-
+        friend Matrix<T> operator^(const Matrix<T>& matrix, const T& number) {
+            Matrix<T> result(matrix);
+            for(T i = 1; i < number; i++)
+                result = result * matrix;
+            return result;
+        }
         Matrix<T> operator/(const T& number) {
             if(number == 0) {
                 std::cerr << "Divide by zero";
@@ -118,5 +167,6 @@ namespace Matrix {
                     result[i][j] /= number;
             return result;
         }
+        
     };
 }
