@@ -84,7 +84,20 @@ namespace Matrix {
                     result[i][j] = data_[j][i];
             return result;
         }
-        T Determinant(void) const;
+        T Determinant(void) const {
+            if(rows_ != columns_) {
+                std::cerr << "Matrix is not square\n";
+                return T();
+            }
+
+            if(rows_ == 1) {
+                return data_[0][0];
+            }
+            if(rows_ == 2) {
+                return data_[0][0] * data_[1][1] - data_[0][1] * data_[1][0];
+            }
+            return T();
+        }
         size_t Rank(void) const;
         Matrix<T> RowEchelonForm(void) const;
         Matrix<T> Diagonal(void) const;
