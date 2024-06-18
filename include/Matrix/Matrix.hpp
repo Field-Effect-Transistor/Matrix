@@ -109,7 +109,13 @@ namespace Matrix {
             return T();
         }
         size_t Rank(void) const;
-        Matrix<T> RowEchelonForm(void) const;
+        Matrix<T> RowEchelonForm(void) const {
+            Matrix<T> result(*this);
+            for(size_t i = 0, j = 0; i < result.rows_; ++i)
+                if(result[i][j] != 0) {
+                    
+                }
+        }
         Matrix<T> Diagonal(void) const;
         Matrix<T> Inverse(void) const;
 
