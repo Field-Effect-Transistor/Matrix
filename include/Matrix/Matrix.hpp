@@ -96,6 +96,16 @@ namespace Matrix {
             if(rows_ == 2) {
                 return data_[0][0] * data_[1][1] - data_[0][1] * data_[1][0];
             }
+            if(rows_ == 3) {
+                return (
+                    data_[0][0] * data_[1][1] * data_[2][2] +
+                    data_[0][1] * data_[1][2] * data_[2][0] +
+                    data_[0][2] * data_[1][0] * data_[2][1] -
+                    data_[2][0] * data_[1][1] * data_[0][2] -
+                    data_[0][1] * data_[1][0] * data_[2][2] -
+                    data_[0][0] * data_[1][2] * data_[2][1]
+                );
+            }
             return T();
         }
         size_t Rank(void) const;
