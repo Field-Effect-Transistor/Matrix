@@ -77,6 +77,25 @@ namespace Matrix {
         inline size_t getColumns(void) const {return columns_;}
 
     // Methods
+        void copyFrom(size_t RowIndex, T*& Row) const {
+            if (RowIndex >= rows_) {
+                std::cerr << "Invalid row index\n";
+                return;
+            }
+
+            Row = new T[columns_];
+            for(size_t i = 0; i < columns_; ++i)
+                Row[i] = data_[RowIndex][i];
+        }
+        void pasteInto(size_t RowIndex, T*& Row) {
+            if (RowIndex >= rows_) {
+                std::cerr << "Invalid row index\n";
+                return;
+            }
+
+            for(size_t i = 0; i < columns_; ++i)
+                data_[RowIndex][i] = Row[i];
+        }
         Matrix<T> Transpose(void) const {
             Matrix<T> result(columns_, rows_);
             for(size_t i = 0; i < columns_; ++i)
@@ -111,10 +130,14 @@ namespace Matrix {
         size_t Rank(void) const;
         Matrix<T> RowEchelonForm(void) const {
             Matrix<T> result(*this);
-            for(size_t i = 0, j = 0; i < result.rows_; ++i)
-                if(result[i][j] != 0) {
-                    
-                }
+            if(result[0][0] != 1) {
+                int index = 1;
+                while (result[index][0] != 1 or index != result.getRows())
+                    ++index;
+                //if (index == result.getRows())
+
+                
+            }
         }
         Matrix<T> Diagonal(void) const;
         Matrix<T> Inverse(void) const;
