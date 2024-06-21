@@ -77,17 +77,17 @@ namespace Matrix {
         inline size_t getColumns(void) const {return columns_;}
 
     // Methods
-        void copyFrom(size_t RowIndex, T*& Row) const {
+        void copyFromMatrix(size_t RowIndex, T* Row) const {
             if (RowIndex >= rows_) {
                 std::cerr << "Invalid row index\n";
                 return;
             }
 
-            Row = new T[columns_];
             for(size_t i = 0; i < columns_; ++i)
                 Row[i] = data_[RowIndex][i];
         }
-        void pasteInto(size_t RowIndex, T*& Row) {
+
+        void pasteIntoMatrix(size_t RowIndex, T* Row) {
             if (RowIndex >= rows_) {
                 std::cerr << "Invalid row index\n";
                 return;
@@ -128,16 +128,41 @@ namespace Matrix {
             return T();
         }
         size_t Rank(void) const;
+        //refactor with https://chatgpt.com/c/6d54cf33-18c6-4777-939b-889a6be5a822
         Matrix<T> RowEchelonForm(void) const {
             Matrix<T> result(*this);
-            if(result[0][0] != 1) {
-                int index = 1;
-                while (result[index][0] != 1 or index != result.getRows())
-                    ++index;
-                //if (index == result.getRows())
-
-                
+            
+            // search for first non-zero
+            size_t i = 0, j = 0;
+            while(i < result.rows_ && j < result.columns_) {
+                if(result[i][j] != 0)
+                    break;
+                ++i;
+                if(i == result.rows_) {
+                    ++j;
+                    i = 0;
+                }
             }
+            
+            //if zero-matrix return the same
+            if(i == result.rows_ || j == result.columns_)
+                return result;
+            
+            //swap rows
+            T* tempPtr = new T[result.columns_];
+            result.copyFromMatrix(0, tempPtr);
+            result.pasteIntoMatrix(0, result[i]);
+            result.pasteIntoMatrix(i, tempPtr);
+            delete[] tempPtr;
+
+            //normalization
+            T tempN = result[0][j];
+            for(i = 0; i < result.columns_; ++i)
+                result[0][i] /= tempN;
+            
+            
+
+            return result;
         }
         Matrix<T> Diagonal(void) const;
         Matrix<T> Inverse(void) const;
